@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Cho Cho Charles | Netherite System</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg:#0f172a;
+  --card:#111827;
+  --blue:#3b82f6;
+  --text:#e5e7eb;
+}
+
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family: 'Inter', sans-serif;
+}
+
+.container {
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+
+.embed {
+  background:var(--card);
+  border-left:5px solid var(--blue);
+  border-radius:6px;
+  padding:15px;
+  margin-bottom:20px;
+  position:relative;
+}
+
+.embed h2, h3 {
+  margin:5px 0;
+  color:#93c5fd;
+}
+
+input, button {
+  background:#020617;
+  color:white;
+  border:1px solid #1e293b;
+  padding:8px;
+  border-radius:5px;
+  margin:5px 0;
+}
+
+button {
+  background:var(--blue);
+  cursor:pointer;
+}
+
+button:hover {
+  opacity:0.85;
+}
+
+.menu {
+  position:absolute;
+  top:10px;
+  right:10px;
+  cursor:pointer;
+}
+
+.close {
+  display:none;
+  cursor:pointer;
+}
+
+.hidden { display:none }
+
+.icon {
+  font-size:24px;
+}
+
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<!-- LOGIN -->
+<div class="embed" id="loginBox">
+  <div class="menu" onclick="toggle(this)">⋮</div>
+  <div class="close" onclick="closeBox('loginBox')">✖</div>
+
+  <h2>🔐 Login</h2>
+  <input id="loginUser" placeholder="Username"><br>
+  <input id="loginPass" type="password" placeholder="Password"><br>
+  <button onclick="login()">Login</button>
+</div>
+
+<!-- REGISTER -->
+<div class="embed" id="registerBox">
+  <div class="menu" onclick="toggle(this)">⋮</div>
+  <div class="close" onclick="closeBox('registerBox')">✖</div>
+
+  <h2>📝 Register</h2>
+  <input id="regUser" placeholder="Username"><br>
+  <input id="regPass" type="password" placeholder="Password"><br>
+  <label><input type="checkbox" id="vipCheck"> VIP</label><br>
+  <button onclick="register()">Create Account</button>
+</div>
+
+<!-- USER -->
+<div class="embed hidden" id="userBox">
+  <div class="menu" onclick="toggle(this)">⋮</div>
+  <div class="close" onclick="closeBox('userBox')">✖</div>
+
+  <h2>👤 Profile</h2>
+  <p id="profileInfo"></p>
+
+  <h3>💎 Wallet</h3>
+  <p id="walletInfo"></p>
+
+  <h3>🏦 Netherite Bank</h3>
+  <span class="icon">🧱🧱</span>
+  <p id="bankInfo"></p>
+  <input id="depositAmount" type="number" placeholder="Deposit Netherite">
+  <button onclick="deposit()">Deposit</button>
+
+  <h3>🛒 Character Shop</h3>
+  <div id="shop"></div>
+
+  <button onclick="logout()">Logout</button>
+</div>
+
+<!-- ADMIN -->
+<div class="embed hidden" id="adminBox">
+  <div class="menu" onclick="toggle(this)">⋮</div>
+  <div class="close" onclick="closeBox('adminBox')">✖</div>
+
+  <h2>🛠 Admin Panel</h2>
+
+  <h3>Add Netherite</h3>
+  <input id="adminUser" placeholder="Username">
+  <input id="adminAmount" type="number" placeholder="Amount">
+  <button onclick="addNetherite()">Add</button>
+
+  <h3>Add Character</h3>
+  <input id="charName" placeholder="Character Name">
+  <input id="charPrice" type="number" placeholder="Price">
+  <button onclick="addCharacter()">Add</button>
+
+  <button onclick="logout()">Logout</button>
+</div>
+
+</div>
+
+<script>
+let currentUser=null;
+const admin={u:"srijan@admin",p:"brave@$1234"};
+
+const users=()=>JSON.parse(localStorage.getItem("users")||"{}");
+const save=u=>localStorage.setItem("users",JSON.stringify(u));
+const chars=()=>JSON.parse(localStorage.getItem("chars")||"[]");
+const saveChars=c=>localStorage.setItem("chars",JSON.stringify(c));
+
+function register(){
+ let u=regUser.value,p=regPass.value,v=vipCheck.checked;
+ let us=users();
+ if(us[u])return alert("User exists");
+ us[u]={password:p,netherite:0,bank:0,vip:v?"VIP":"Normal",chars:[]};
+ save(us); alert("Registered");
+}
+
+function login(){
+ let u=loginUser.value,p=loginPass.value;
+ if(u===admin.u&&p===admin.p){
+  adminBox.classList.remove("hidden");
+  loginBox.classList.add("hidden");
+  registerBox.classList.add("hidden");
+  return;
+ }
+ let us=users();
+ if(!us[u]||us[u].password!==p)return alert("Wrong login");
+ currentUser=u;
+ loginBox.classList.add("hidden");
+ registerBox.classList.add("hidden");
+ userBox.classList.remove("hidden");
+ refresh();
+}
+
+function refresh(){
+ let u=users()[currentUser];
+ profileInfo.innerText=`${currentUser} | ${u.vip}`;
+ walletInfo.innerText=`Netherite: ${u.netherite}`;
+ bankInfo.innerText=`Stored: ${u.bank}`;
+ loadShop();
+}
+
+function deposit(){
+ let a=+depositAmount.value;
+ let us=users(),u=us[currentUser];
+ if(u.netherite<a)return alert("Not enough");
+ u.netherite-=a; u.bank+=a;
+ save(us); refresh();
+}
+
+function loadShop(){
+ let s=shop; s.innerHTML="";
+ chars().forEach(c=>{
+  let b=document.createElement("button");
+  b.textContent=`Buy ${c.name} (${c.price})`;
+  b.onclick=()=>{
+   let us=users(),u=us[currentUser];
+   if(u.netherite<c.price)return alert("Not enough Netherite");
+   u.netherite-=c.price; u.chars.push(c.name);
+   save(us); refresh(); alert("Bought!");
+  };
+  s.appendChild(b); s.appendChild(document.createElement("br"));
+ });
+}
+
+function addNetherite(){
+ let us=users(),u=adminUser.value;
+ if(!us[u])return alert("User not found");
+ us[u].netherite+=+adminAmount.value;
+ save(us); alert("Added");
+}
+
+function addCharacter(){
+ let c=chars();
+ c.push({name:charName.value,price:+charPrice.value});
+ saveChars(c); alert("Character added");
+}
+
+function toggle(el){
+ el.style.display="none";
+ el.nextElementSibling.style.display="block";
+}
+
+function closeBox(id){
+ document.getElementById(id).classList.add("hidden");
+}
+
+function logout(){location.reload();}
+</script>
+
+</body>
+</html>
