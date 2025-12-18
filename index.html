@@ -1,234 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cho Cho Charles Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <!-- Remix Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/3.5.0/remixicon.css">
 
-<style>
-*{box-sizing:border-box}
-body{
-  margin:0;
-  font-family:Poppins,sans-serif;
-  background:linear-gradient(180deg,#6d28d9,#4c1d95);
-  min-height:100vh;
-  color:#fff;
-}
+  <!-- Your CSS -->
+  <link rel="stylesheet" href="assets/css/styles.css">
 
-.center{
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  min-height:100vh;
-}
-
-.card{
-  background:rgba(255,255,255,0.12);
-  backdrop-filter:blur(12px);
-  padding:25px;
-  border-radius:20px;
-  width:90%;
-  max-width:360px;
-}
-
-.card h2{text-align:center}
-
-.input-box{
-  position:relative;
-  margin:12px 0;
-}
-
-.input-box input{
-  width:100%;
-  padding:14px 40px 14px 14px;
-  border:none;
-  border-radius:30px;
-  outline:none;
-}
-
-.input-box img{
-  position:absolute;
-  right:14px;
-  top:50%;
-  transform:translateY(-50%);
-  width:18px;
-  opacity:.7;
-}
-
-button{
-  width:100%;
-  padding:14px;
-  border:none;
-  border-radius:30px;
-  background:#fff;
-  color:#4c1d95;
-  font-weight:600;
-  cursor:pointer;
-}
-
-.link{text-align:center;margin-top:10px;cursor:pointer}
-
-.hidden{display:none}
-
-.topbar{
-  background:#1e1b4b;
-  padding:14px;
-  display:flex;
-  justify-content:space-between;
-}
-
-.menu{
-  font-size:22px;
-  cursor:pointer;
-}
-
-.drawer{
-  position:fixed;
-  top:0;left:-260px;
-  width:250px;height:100%;
-  background:#1e1b4b;
-  padding:20px;
-  transition:.3s;
-}
-
-.drawer a{
-  display:block;
-  margin:15px 0;
-  color:#fff;
-  text-decoration:none;
-}
-
-.profile-box{padding:20px}
-</style>
+  <title>Login</title>
 </head>
-
 <body>
 
-<!-- LOGIN -->
-<div class="center" id="loginPage">
-  <div class="card">
-    <h2>Login</h2>
-    <div class="input-box">
-      <input id="loginUser" placeholder="Username">
-      <img src="https://cdn-icons-png.flaticon.com/512/456/456212.png">
+<!-- LOGIN PAGE -->
+<div class="login" id="loginPage">
+  <img src="assets/img/login-bg.png" class="login__bg">
+
+  <form class="login__form" onsubmit="login(event)">
+    <h1 class="login__title">Login</h1>
+
+    <div class="login__inputs">
+      <div class="login__box">
+        <input id="username" placeholder="Username" class="login__input" required>
+        <i class="ri-user-fill"></i>
+      </div>
+
+      <div class="login__box">
+        <input id="password" type="password" placeholder="Password" class="login__input" required>
+        <i class="ri-lock-2-fill"></i>
+      </div>
     </div>
-    <div class="input-box">
-      <input id="loginPass" type="password" placeholder="Password">
-      <img src="https://cdn-icons-png.flaticon.com/512/3064/3064155.png">
+
+    <button class="login__button">Login</button>
+
+    <div class="login__register">
+      Don't have an account?
+      <a href="#" onclick="register()">Register</a>
     </div>
-    <button onclick="login()">Login</button>
-    <div class="link" onclick="toggleRegister()">Don't have an account? Register</div>
-  </div>
+  </form>
 </div>
 
-<!-- REGISTER -->
-<div class="center hidden" id="registerPage">
-  <div class="card">
-    <h2>Register</h2>
-    <input id="regUser" placeholder="Username">
-    <input id="regPass" type="password" placeholder="Password (min 8)">
-    <button onclick="register()">Register</button>
-    <div class="link" onclick="toggleRegister()">Back to login</div>
-  </div>
-</div>
+<!-- APP -->
+<div id="app" class="hidden">
 
-<!-- DASHBOARD -->
-<div class="hidden" id="app">
-  <div class="topbar">
-    <div class="menu" onclick="openMenu()">☰</div>
-    <div>Cho Cho Charles</div>
-  </div>
+  <!-- HAMBURGER -->
+  <div class="hamburger" onclick="openMenu()">☰</div>
 
-  <div class="drawer" id="drawer">
-    <a onclick="show('profile')">Profile</a>
-    <a onclick="show('bank')">Bank</a>
-    <a onclick="show('shop')">Characters</a>
+  <!-- SIDE MENU -->
+  <div class="side-menu" id="sideMenu">
+    <div class="menu-header">
+      <span>Menu</span>
+      <span class="close-btn" onclick="closeMenu()">✖</span>
+    </div>
+
+    <a onclick="showProfile()">Profile</a>
     <a onclick="logout()">Logout</a>
   </div>
 
-  <div class="profile-box" id="content"></div>
+  <!-- CONTENT -->
+  <div style="padding:20px;color:white">
+    <h2 id="welcome"></h2>
+    <p>Netherite: <span id="netherite"></span></p>
+  </div>
 </div>
 
 <script>
-const banned=["sex","porn","xxx"];
-const admin={u:"srijan@admin",p:"brave@$1234"};
+/* ===== SESSION ===== */
+const session = localStorage.getItem("session");
 
-const users=()=>JSON.parse(localStorage.getItem("users")||"{}");
-const save=u=>localStorage.setItem("users",JSON.stringify(u));
-
-let session=localStorage.getItem("session");
-
-function toggleRegister(){
- loginPage.classList.toggle("hidden");
- registerPage.classList.toggle("hidden");
+if (session) {
+  loginPage.style.display = "none";
+  app.classList.remove("hidden");
+  loadUser();
 }
 
-function register(){
- if(regPass.value.length<8) return alert("Password too short");
- if(banned.some(b=>regUser.value.includes(b))) return alert("Bad username");
-
- let u=users();
- if(u[regUser.value]) return alert("User exists");
-
- u[regUser.value]={password:regPass.value,netherite:100,bank:0,chars:[]};
- save(u);
- alert("Registered");
- toggleRegister();
+/* ===== USERS ===== */
+function getUsers() {
+  return JSON.parse(localStorage.getItem("users") || "{}");
 }
 
-function login(){
- let u=users()[loginUser.value];
- if(!u||u.password!==loginPass.value) return alert("Wrong login");
- localStorage.setItem("session",loginUser.value);
- location.reload();
+function saveUsers(u) {
+  localStorage.setItem("users", JSON.stringify(u));
 }
 
-function openMenu(){
- drawer.style.left=drawer.style.left==="0px"?"-260px":"0px";
+/* ===== REGISTER ===== */
+function register() {
+  const u = username.value;
+  const p = password.value;
+
+  if (p.length < 8) return alert("Password must be 8 characters");
+
+  const users = getUsers();
+  if (users[u]) return alert("User exists");
+
+  users[u] = { password: p, netherite: 100 };
+  saveUsers(users);
+  alert("Registered! Now login.");
 }
 
-function show(page){
- let u=users()[session];
- if(page==="profile"){
-  content.innerHTML=`
-   <h3>${session}</h3>
-   <p>Netherite: ${u.netherite}</p>
-   <p>Bank: ${u.bank}</p>
-   <p>Characters: ${u.chars.length?u.chars.join(", "):"None"}</p>`;
- }
- if(page==="shop"){
-  let owned=u.chars;
-  content.innerHTML="<h3>Characters</h3>";
-  ["Charles","Guard","Explorer"].forEach(c=>{
-   if(owned.includes(c)){
-    content.innerHTML+=`<p>${c} - Owned</p>`;
-   }else{
-    content.innerHTML+=`<button onclick="buy('${c}')">Buy ${c} (50)</button>`;
-   }
-  });
- }
+/* ===== LOGIN ===== */
+function login(e) {
+  e.preventDefault();
+  const users = getUsers();
+
+  if (!users[username.value] || users[username.value].password !== password.value) {
+    alert("Wrong login");
+    return;
+  }
+
+  localStorage.setItem("session", username.value);
+  location.reload();
 }
 
-function buy(c){
- let us=users(),u=us[session];
- if(u.chars.includes(c)) return alert("Already owned");
- if(u.netherite<50) return alert("Not enough Netherite");
- u.netherite-=50; u.chars.push(c);
- save(us); show("shop");
+/* ===== LOAD USER ===== */
+function loadUser() {
+  const u = getUsers()[session];
+  welcome.innerText = "Welcome, " + session;
+  netherite.innerText = u.netherite;
 }
 
-function logout(){
- localStorage.removeItem("session");
- location.reload();
+/* ===== MENU ===== */
+function openMenu() {
+  sideMenu.style.left = "0";
+}
+function closeMenu() {
+  sideMenu.style.left = "-260px";
 }
 
-if(session){
- loginPage.classList.add("hidden");
- registerPage.classList.add("hidden");
- app.classList.remove("hidden");
- show("profile");
+/* ===== PROFILE PAGE ===== */
+function showProfile() {
+  window.location.href = "page.html?username=" + session;
+}
+
+/* ===== LOGOUT ===== */
+function logout() {
+  localStorage.removeItem("session");
+  location.reload();
 }
 </script>
 
