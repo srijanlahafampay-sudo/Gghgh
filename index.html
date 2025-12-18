@@ -1,170 +1,179 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Cho Cho Charles | Netherite System</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cho Cho Charles | Netherite</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
-:root {
-  --bg:#0f172a;
-  --card:#111827;
-  --blue:#3b82f6;
-  --text:#e5e7eb;
-}
-
 body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
+  margin: 0;
   font-family: 'Inter', sans-serif;
+  background: linear-gradient(180deg,#020617,#020617,#020617);
+  color: #e5e7eb;
 }
 
 .container {
-  max-width:900px;
-  margin:auto;
-  padding:20px;
+  max-width: 420px;
+  margin: auto;
+  padding: 20px;
 }
 
-.embed {
-  background:var(--card);
-  border-left:5px solid var(--blue);
-  border-radius:6px;
-  padding:15px;
-  margin-bottom:20px;
-  position:relative;
+.hero {
+  text-align: center;
+  padding: 40px 10px;
 }
 
-.embed h2, h3 {
-  margin:5px 0;
-  color:#93c5fd;
+.hero h1 {
+  font-size: 36px;
+  color: #38bdf8;
 }
 
-input, button {
-  background:#020617;
-  color:white;
-  border:1px solid #1e293b;
-  padding:8px;
-  border-radius:5px;
-  margin:5px 0;
+.hero p {
+  opacity: 0.8;
 }
 
-button {
-  background:var(--blue);
-  cursor:pointer;
+.btn {
+  width: 100%;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-button:hover {
-  opacity:0.85;
+.btn-main {
+  background: #5865f2;
+  color: white;
+  margin-bottom: 10px;
 }
 
-.menu {
-  position:absolute;
-  top:10px;
-  right:10px;
-  cursor:pointer;
+.btn-outline {
+  background: transparent;
+  border: 2px solid #38bdf8;
+  color: #38bdf8;
 }
 
-.close {
-  display:none;
-  cursor:pointer;
+.card {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 14px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 8px 0;
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  color: white;
 }
 
 .hidden { display:none }
 
-.icon {
-  font-size:24px;
+.section-title {
+  color:#38bdf8;
+  font-size:22px;
 }
 
+img.icon {
+  width: 40px;
+}
 </style>
 </head>
 
 <body>
+
 <div class="container">
 
-<!-- LOGIN -->
-<div class="embed" id="loginBox">
-  <div class="menu" onclick="toggle(this)">⋮</div>
-  <div class="close" onclick="closeBox('loginBox')">✖</div>
+<!-- HERO -->
+<div class="hero">
+  <img class="icon" src="https://cdn-icons-png.flaticon.com/512/5968/5968756.png">
+  <h1>Cho Cho Charles</h1>
+  <p>Your Ultimate Netherite Game System</p>
+  <button class="btn btn-main">Enter Game</button>
+  <button class="btn btn-outline">Learn More</button>
+</div>
 
-  <h2>🔐 Login</h2>
-  <input id="loginUser" placeholder="Username"><br>
-  <input id="loginPass" type="password" placeholder="Password"><br>
-  <button onclick="login()">Login</button>
+<!-- LOGIN -->
+<div class="card" id="loginBox">
+  <h2 class="section-title">Login</h2>
+  <input id="loginUser" placeholder="Username">
+  <input id="loginPass" type="password" placeholder="Password">
+  <button class="btn btn-main" onclick="login()">Login</button>
 </div>
 
 <!-- REGISTER -->
-<div class="embed" id="registerBox">
-  <div class="menu" onclick="toggle(this)">⋮</div>
-  <div class="close" onclick="closeBox('registerBox')">✖</div>
-
-  <h2>📝 Register</h2>
-  <input id="regUser" placeholder="Username"><br>
-  <input id="regPass" type="password" placeholder="Password"><br>
-  <label><input type="checkbox" id="vipCheck"> VIP</label><br>
-  <button onclick="register()">Create Account</button>
+<div class="card" id="registerBox">
+  <h2 class="section-title">Register</h2>
+  <input id="regUser" placeholder="Username">
+  <input id="regPass" type="password" placeholder="Password (min 8 chars)">
+  <label><input type="checkbox" id="vipCheck"> VIP</label>
+  <button class="btn btn-outline" onclick="register()">Create Account</button>
 </div>
 
 <!-- USER -->
-<div class="embed hidden" id="userBox">
-  <div class="menu" onclick="toggle(this)">⋮</div>
-  <div class="close" onclick="closeBox('userBox')">✖</div>
+<div class="card hidden" id="userBox">
+  <h2 class="section-title">Profile</h2>
+  <p id="profile"></p>
 
-  <h2>👤 Profile</h2>
-  <p id="profileInfo"></p>
+  <p id="wallet"></p>
+  <p id="bank"></p>
 
-  <h3>💎 Wallet</h3>
-  <p id="walletInfo"></p>
-
-  <h3>🏦 Netherite Bank</h3>
-  <span class="icon">🧱🧱</span>
-  <p id="bankInfo"></p>
   <input id="depositAmount" type="number" placeholder="Deposit Netherite">
-  <button onclick="deposit()">Deposit</button>
+  <button class="btn btn-main" onclick="deposit()">Deposit</button>
 
-  <h3>🛒 Character Shop</h3>
+  <h3 class="section-title">Character Shop</h3>
   <div id="shop"></div>
 
-  <button onclick="logout()">Logout</button>
+  <button class="btn btn-outline" onclick="logout()">Logout</button>
 </div>
 
 <!-- ADMIN -->
-<div class="embed hidden" id="adminBox">
-  <div class="menu" onclick="toggle(this)">⋮</div>
-  <div class="close" onclick="closeBox('adminBox')">✖</div>
-
-  <h2>🛠 Admin Panel</h2>
-
-  <h3>Add Netherite</h3>
+<div class="card hidden" id="adminBox">
+  <h2 class="section-title">Admin Panel</h2>
   <input id="adminUser" placeholder="Username">
-  <input id="adminAmount" type="number" placeholder="Amount">
-  <button onclick="addNetherite()">Add</button>
+  <input id="adminAmount" type="number" placeholder="Netherite">
+  <button class="btn btn-main" onclick="addNetherite()">Add Netherite</button>
 
-  <h3>Add Character</h3>
   <input id="charName" placeholder="Character Name">
   <input id="charPrice" type="number" placeholder="Price">
-  <button onclick="addCharacter()">Add</button>
+  <button class="btn btn-outline" onclick="addCharacter()">Add Character</button>
 
-  <button onclick="logout()">Logout</button>
+  <button class="btn btn-outline" onclick="logout()">Logout</button>
 </div>
 
 </div>
 
 <script>
-let currentUser=null;
 const admin={u:"srijan@admin",p:"brave@$1234"};
+let currentUser=localStorage.getItem("session");
+
+const banned=["sex","porn","fuck","xxx"];
 
 const users=()=>JSON.parse(localStorage.getItem("users")||"{}");
 const save=u=>localStorage.setItem("users",JSON.stringify(u));
 const chars=()=>JSON.parse(localStorage.getItem("chars")||"[]");
 const saveChars=c=>localStorage.setItem("chars",JSON.stringify(c));
 
+function cleanName(n){
+ return !banned.some(b=>n.toLowerCase().includes(b));
+}
+
 function register(){
- let u=regUser.value,p=regPass.value,v=vipCheck.checked;
- let us=users();
- if(us[u])return alert("User exists");
- us[u]={password:p,netherite:0,bank:0,vip:v?"VIP":"Normal",chars:[]};
- save(us); alert("Registered");
+ if(regPass.value.length<8) return alert("Password must be 8 characters");
+ if(!cleanName(regUser.value)) return alert("Invalid username");
+
+ let u=users();
+ if(u[regUser.value]) return alert("User exists");
+
+ u[regUser.value]={password:regPass.value,netherite:0,bank:0,vip:vipCheck.checked?"VIP":"Normal",chars:[]};
+ save(u); alert("Registered");
 }
 
 function login(){
@@ -176,49 +185,50 @@ function login(){
   return;
  }
  let us=users();
- if(!us[u]||us[u].password!==p)return alert("Wrong login");
- currentUser=u;
- loginBox.classList.add("hidden");
- registerBox.classList.add("hidden");
- userBox.classList.remove("hidden");
- refresh();
+ if(!us[u]||us[u].password!==p) return alert("Wrong login");
+ localStorage.setItem("session",u);
+ location.reload();
 }
 
-function refresh(){
+if(currentUser){
  let u=users()[currentUser];
- profileInfo.innerText=`${currentUser} | ${u.vip}`;
- walletInfo.innerText=`Netherite: ${u.netherite}`;
- bankInfo.innerText=`Stored: ${u.bank}`;
+ loginBox?.classList.add("hidden");
+ registerBox?.classList.add("hidden");
+ userBox?.classList.remove("hidden");
+ profile.innerText=`${currentUser} | ${u.vip}`;
+ wallet.innerText=`Netherite: ${u.netherite}`;
+ bank.innerText=`Bank: ${u.bank}`;
  loadShop();
 }
 
 function deposit(){
  let a=+depositAmount.value;
  let us=users(),u=us[currentUser];
- if(u.netherite<a)return alert("Not enough");
+ if(u.netherite<a) return alert("Not enough");
  u.netherite-=a; u.bank+=a;
- save(us); refresh();
+ save(us); location.reload();
 }
 
 function loadShop(){
- let s=shop; s.innerHTML="";
+ let s=document.getElementById("shop"); s.innerHTML="";
  chars().forEach(c=>{
   let b=document.createElement("button");
+  b.className="btn btn-main";
   b.textContent=`Buy ${c.name} (${c.price})`;
   b.onclick=()=>{
    let us=users(),u=us[currentUser];
-   if(u.netherite<c.price)return alert("Not enough Netherite");
+   if(u.netherite<c.price) return alert("Not enough Netherite");
    u.netherite-=c.price; u.chars.push(c.name);
-   save(us); refresh(); alert("Bought!");
+   save(us); location.reload();
   };
-  s.appendChild(b); s.appendChild(document.createElement("br"));
+  s.appendChild(b);
  });
 }
 
 function addNetherite(){
- let us=users(),u=adminUser.value;
- if(!us[u])return alert("User not found");
- us[u].netherite+=+adminAmount.value;
+ let us=users();
+ if(!us[adminUser.value]) return alert("User not found");
+ us[adminUser.value].netherite+=+adminAmount.value;
  save(us); alert("Added");
 }
 
@@ -228,16 +238,10 @@ function addCharacter(){
  saveChars(c); alert("Character added");
 }
 
-function toggle(el){
- el.style.display="none";
- el.nextElementSibling.style.display="block";
+function logout(){
+ localStorage.removeItem("session");
+ location.reload();
 }
-
-function closeBox(id){
- document.getElementById(id).classList.add("hidden");
-}
-
-function logout(){location.reload();}
 </script>
 
 </body>
