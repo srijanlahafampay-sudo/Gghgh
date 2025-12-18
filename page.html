@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>User Profile</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body style="background:#111;color:white;padding:20px">
+
+<h2 id="name"></h2>
+<p>Netherite: <span id="netherite"></span></p>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const user = params.get("username");
+
+const users = JSON.parse(localStorage.getItem("users") || "{}");
+
+if (!users[user]) {
+  document.body.innerHTML = "User not found";
+} else {
+  name.innerText = "Profile: " + user;
+  netherite.innerText = users[user].netherite;
+}
+</script>
+
+</body>
+</html>
